@@ -7,6 +7,7 @@ from PyQt6.QtWidgets import (
 from PyQt6.QtCore import Qt, QTimer
 from PyQt6.QtGui import QFont
 
+from models.progreso import PracticaProgreso
 from services.practice_service import PracticeService
 from models.kanji import Kanji
 from ui.widgets.back_button import BackButton
@@ -83,6 +84,7 @@ class PracticeScreen(QWidget):
         self.meaning_label.setStyleSheet("color: #d4d2d2;")
         self.meaning_label.setWordWrap(True)  # Por si el significado es largo
         board_layout.addWidget(self.meaning_label)
+
         # Pistas
         self.clue_label = QLabel("")
         self.clue_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
@@ -292,7 +294,10 @@ class PracticeScreen(QWidget):
 
         all_kanji = self.session.query(Kanji).count()
 
-        
+        progreso=PracticaProgreso(record_maximo=self.practice_service.max_streak)
+        self.session.add(progreso)
+        self.session.commit()
+
         from ui.screens.practice_result_screen import PracticeResultScreen
 
         screen = PracticeResultScreen(
